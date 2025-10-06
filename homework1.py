@@ -92,12 +92,13 @@ def featureQ2(datum, maxLen):
     
     Rationale: One-hot encoding allows the model to learn separate effects for
     each day/month without assuming ordinal relationships. We drop one category
-    from each (Sunday=6 for weekday, December=12 for month) to avoid the dummy
-    variable trap (multicollinearity). This results in:
+    from each (Monday=0 for weekday, January=1 for month) to avoid the dummy
+    variable trap (multicollinearity). This follows standard statistical practice
+    where the first category is used as the reference. This results in:
     - 1 offset
     - 1 length feature
-    - 6 weekday features (Monday=0 through Saturday=5, excluding Sunday=6)
-    - 11 month features (January=1 through November=11, excluding December=12)
+    - 6 weekday features (Tuesday=1 through Sunday=6, excluding Monday=0)
+    - 11 month features (February=2 through December=12, excluding January=1)
     Total: 19 dimensions as required
     """
     length = len(datum['review_text'])
@@ -111,12 +112,12 @@ def featureQ2(datum, maxLen):
     weekday = t.weekday()  # 0=Monday, 6=Sunday
     month = t.month        # 1-12
     
-    # One-hot encode weekday (0-5, exclude 6=Sunday)
-    for i in range(6):
+    # One-hot encode weekday (1-6, exclude 0=Monday as reference)
+    for i in range(1, 7):
         feat.append(1 if weekday == i else 0)
     
-    # One-hot encode month (1-11, exclude 12=December)
-    for i in range(1, 12):
+    # One-hot encode month (2-12, exclude 1=January as reference)
+    for i in range(2, 13):
         feat.append(1 if month == i else 0)
     
     return feat

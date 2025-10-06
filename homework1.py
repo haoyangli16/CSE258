@@ -23,10 +23,8 @@ Design Decisions:
 - Q7: Enhanced features include beer style, text length, and reviewer statistics
 """
 
-from collections import defaultdict
 from sklearn import linear_model
 import numpy
-import math
 
 
 # ==================== QUESTION 1 ====================
@@ -64,7 +62,7 @@ def Q1(dataset):
     
     Returns:
         theta: Model coefficients [θ0, θ1]
-        MSE: Mean squared error on entire dataset
+        MSE: Mean squared error on entire dataset (Python float)
     """
     maxLen = getMaxLen(dataset)
     
@@ -81,7 +79,7 @@ def Q1(dataset):
     
     # Calculate MSE
     predictions = model.predict(X)
-    MSE = numpy.mean((predictions - y) ** 2)
+    MSE = float(numpy.mean((predictions - y) ** 2))
     
     return theta, MSE
 
@@ -135,7 +133,7 @@ def Q2(dataset):
     Returns:
         X2: Feature matrix (first two rows returned by autograder)
         Y2: Target vector (first two elements)
-        MSE2: Mean squared error
+        MSE2: Mean squared error (Python float for autograder compatibility)
     """
     maxLen = getMaxLen(dataset)
     
@@ -149,7 +147,7 @@ def Q2(dataset):
     
     # Calculate MSE
     predictions = model.predict(X)
-    MSE = numpy.mean((predictions - y) ** 2)
+    MSE = float(numpy.mean((predictions - y) ** 2))
     
     return X, y, MSE
 
@@ -185,7 +183,7 @@ def Q3(dataset):
     Returns:
         X3: Feature matrix
         Y3: Target vector
-        MSE3: Mean squared error
+        MSE3: Mean squared error (Python float)
     """
     maxLen = getMaxLen(dataset)
     
@@ -199,7 +197,7 @@ def Q3(dataset):
     
     # Calculate MSE
     predictions = model.predict(X)
-    MSE = numpy.mean((predictions - y) ** 2)
+    MSE = float(numpy.mean((predictions - y) ** 2))
     
     return X, y, MSE
 
@@ -216,8 +214,8 @@ def Q4(dataset):
     flexibility leads to overfitting or better generalization.
     
     Returns:
-        test_mse2: MSE of one-hot model on test set
-        test_mse3: MSE of direct encoding model on test set
+        test_mse2: MSE of one-hot model on test set (Python float)
+        test_mse3: MSE of direct encoding model on test set (Python float)
     """
     maxLen = getMaxLen(dataset)
     
@@ -237,7 +235,7 @@ def Q4(dataset):
     y_test = numpy.array([d['rating'] for d in test_data])
     
     pred2 = model2.predict(X_test2)
-    test_mse2 = numpy.mean((pred2 - y_test) ** 2)
+    test_mse2 = float(numpy.mean((pred2 - y_test) ** 2))
     
     # Model 3 (direct encoding)
     X_train3 = numpy.array([featureQ3(d, maxLen) for d in train_data])
@@ -247,7 +245,7 @@ def Q4(dataset):
     
     X_test3 = numpy.array([featureQ3(d, maxLen) for d in test_data])
     pred3 = model3.predict(X_test3)
-    test_mse3 = numpy.mean((pred3 - y_test) ** 2)
+    test_mse3 = float(numpy.mean((pred3 - y_test) ** 2))
     
     return test_mse2, test_mse3
 
@@ -275,8 +273,8 @@ def Q5(dataset, feat_func):
     the majority class. This is crucial for achieving a good balanced error rate.
     
     Returns:
-        TP, TN, FP, FN: Confusion matrix components
-        BER: Balanced Error Rate = 0.5 * (FPR + FNR)
+        TP, TN, FP, FN: Confusion matrix components (Python ints)
+        BER: Balanced Error Rate = 0.5 * (FPR + FNR) (Python float)
     """
     # Create binary labels: 1 if rating >= 4, else 0
     X = numpy.array([feat_func(d) for d in dataset])
@@ -289,17 +287,17 @@ def Q5(dataset, feat_func):
     # Predict
     predictions = model.predict(X)
     
-    # Calculate confusion matrix
-    TP = numpy.sum((predictions == 1) & (y == 1))
-    TN = numpy.sum((predictions == 0) & (y == 0))
-    FP = numpy.sum((predictions == 1) & (y == 0))
-    FN = numpy.sum((predictions == 0) & (y == 1))
+    # Calculate confusion matrix - convert to Python ints for autograder
+    TP = int(numpy.sum((predictions == 1) & (y == 1)))
+    TN = int(numpy.sum((predictions == 0) & (y == 0)))
+    FP = int(numpy.sum((predictions == 1) & (y == 0)))
+    FN = int(numpy.sum((predictions == 0) & (y == 1)))
     
     # Calculate Balanced Error Rate
     # BER = 0.5 * (FP/(TN+FP) + FN/(TP+FN))
     FPR = FP / (TN + FP) if (TN + FP) > 0 else 0
     FNR = FN / (TP + FN) if (TP + FN) > 0 else 0
-    BER = 0.5 * (FPR + FNR)
+    BER = float(0.5 * (FPR + FNR))
     
     return TP, TN, FP, FN, BER
 
